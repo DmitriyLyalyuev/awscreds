@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+import keyring
+import argparse
+import os
+
+environment = ''
+aws_key = ''
+aws_secret = ''
+aws_region = ''
+
+# Read arguments
+parser = argparse.ArgumentParser(
+                    description='Get host names and ip adresses from a cloud')
+parser.add_argument('action',
+                    help='Action: add/get/delete')
+parser.add_argument('-e', '--environment', default=None,
+                    help='Get environment variables')
+
+args = parser.parse_args()
+
+if args.action == 'add':
+    if args.environment is None:
+        while not environment:
+            environment = input("Please input environment name: ")
+    else:
+        environment = args.environment
+    while not aws_key:
+        aws_key = input("Please input AWS_ACCESS_KEY_ID: ")
+    while not aws_secret:
+        aws_secret = input("Please input AWS_SECRET_ACCESS_KEY: ")
+    while not aws_region:
+        aws_region = input("Please input AWS_REGION: ")
+
+    keyring.set_password(
+        'awscreds:' + environment,  'AWS_ACCESS_KEY_ID', aws_key)
+    keyring.set_password(
+        'awscreds:' + environment,  'AWS_SECRET_ACCESS_KEY', aws_secret)
+    keyring.set_password(
+        'awscreds:' + environment,  'AWS_REGION', aws_region)
+    print("Stored")
+elif args.action == 'get':
+    print("export AWS_ACCESS_KEY_ID=" + keyring.get_password('awscreds:' + args.environment, 'AWS_ACCESS_KEY_ID'))
+    print("export AWS_SECRET_ACCESS_KEY=" + keyring.get_password('awscreds:' + args.environment, 'AWS_SECRET_ACCESS_KEY'))
+    print("export AWS_REGION=" + keyring.get_password('awscreds:' + args.environment, 'AWS_REGION'))
+    print("export AWS_DEFAULT_REGION=" + keyring.get_password('awscreds:' + args.environment, 'AWS_REGION'))
+elif args.action == 'delete':
+    if args.environment is None:
+        while not environment:
+            environment = input("Please input environment name: ")
+    else:
+        environment = args.environment
+    answer = input("Are you sure to delete '" + environment + "' (write YES): ")
+    if answer == "YES":
+        keyring.delete_password('awscreds:' + environment, 'AWS_ACCESS_KEY_ID')
+        keyring.delete_password('awscreds:' + environment, 'AWS_SECRET_ACCESS_KEY')
+        keyring.delete_password('awscreds:' + environment, 'AWS_REGION')
+    else:
+        print("Cancelled")
+else:
+    print("Wrong action")
