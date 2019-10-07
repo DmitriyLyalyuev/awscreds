@@ -37,7 +37,7 @@ __version__ = find_version("awscreds/__init__.py")
 setup(
     name="awscreds",
     version=__version__,
-    description="awscreds stores AWS credentials in Mac OS Keychain",
+    description="awscreds stores AWS credentials in OS's secure storage",
     long_description=readme(),
     long_description_content_type="text/markdown",
     author="Dmitriy Lyalyuev",
