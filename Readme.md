@@ -35,5 +35,5 @@ or from sources:
 ## Export credentials into your shell session
 
 ```
-eval `awscreds get -e prj_name`
+eval `awscreds export -e prj_name`
 ```
